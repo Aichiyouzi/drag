@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<style>
+		input{
+            width: 100%;
+            height: 30px;
+        }
+        ul{
+            margin: 0;
+            padding: 0;
+            display: none;
+        }
+        li{
+            list-style: none;
+            background-color: #009999;
+            margin-top: 3px;
+            line-height: 30px;
+            width: 100%;
+        }
+        a{
+            text-decoration: none;
+            color:white;
+            display: block;
+            width: 100%;
+        }
+        a:hover,.hover{
+            background-color: #00FF99;
+        }
+        #box{
+            width: 500px;
+            margin: 100px auto 0;
+        }
+        .select{
+            background-color: #60625b;
+        }
+	</style>
+</head>
+<body>
+<div id="box">
+    <input type="text" id="s"/>
+    <ul id="list">
+        <li><a href="javascript:;">《第七个读者》</a></li>
+        <li><a href="javascript:;">《 心理罪 画像》</a></li>
+        <li><a href="javascript:;">《 心理罪 教化场》</a></li>
+        <li><a href="javascript:;">《 心理罪 暗河》</a></li>
+        <li><a href="javascript:;">《 心理罪 城市之光》</a></li>
+        <li><a href="javascript:;">《地球往事》</a></li>
+        <li><a href="javascript:;">《黑暗森林》</a></li>
+        <li><a href="javascript:;">《死神永生》</a></li>
+        <li><a href="javascript:;">《乡村教师》</a></li>
+        <li><a href="javascript:;">《地球大炮》</a></li>
+    </ul>
+</div>
+<script>
+	var s = document.getElementById("s");
+	var list = document.getElementById("list");
+	var lis = list.getElementsByTagName("li");
+	var as = list.getElementsByTagName("a");
+	var num = -1;
+	var arr = [];
+	var onoff = true;
+	s.onfocus = function(){
+		list.style.display = "block";
+	}
+	s.onblur = function(){
+		if(onoff){
+			list.style.display = "none";	
+		}
+	}
+	list.onmouseover = function(){
+		onoff = false;
+	}
+	list.onmouseout = function(){
+		onoff = true;
+	}
+	document.onkeydown = function(ev){
+		switch (ev.keyCode){
+			case 40://下
+				num++;
+				num %= lis.length;
+				clearFn();
+				lockFn();
+				hoverFn();
+				break;
+			case 38://上
+				num--;
+				if(num<0){
+					num = lis.length-1;
+				}
+				clearFn();
+				lockFn();
+				hoverFn();
+				break;
+			case 13:
+				if(ev.ctrlKey){//多选
+					//如果li被选中则取消选中，如果li未选中则，则选中
+					if(inArray(arr,num) != -1){
+//						取消选中
+						arr.splice(inArray(arr,num),1);
+					}else{
+//						如果li未选中则，则选中
+						arr.push(num);
+					}
+				}else{//单选
+					if(inArray(arr,num) != -1){
+						arr = [];
+					}else{
+						arr = [num];
+					}
+	//				alert(arr);
+				}
+				clearFn();
+				lockFn();
+				break;
+			default:
+				break;
+		}
+	}
+	for(var i = 0;i<lis.length;i++){
+		lis[i].index = i;
+		lis[i].onclick = function(ev){
+//			alert(this.index);
+			if(ev.ctrlKey){//多选
+				if(inArray(arr,this.index) != -1){
+//					取消选中
+					arr.splice(inArray(arr,this.index),1);
+				}else{
+//					如果li未选中则，则选中
+					arr.push(this.index);
+				}
+			}else{//单选
+				if(inArray(arr,this.index) != -1){
+					arr = [];
+				}else{
+					arr = [this.index];
+				}
+			}
+			clearFn();
+			lockFn();
+			s.focus();
+		}
+	}
+	function clearFn(){
+		for(var i = 0;i<lis.length;i++){
+			lis[i].className = "";
+		}
+	}
+	function hoverFn(){
+		lis[num].className = "hover";
+	}	
+	function lockFn(){
+//		[0,1,2,5]
+		for(var i = 0;i<arr.length;i++){
+			lis[arr[i]].className = "select";
+		}
+		strJoin();
+	}
+	function inArray(arr,s){//如果s在arr中，则返回s在arr中的下标，否则，返回-1
+		for(var i = 0;i<arr.length;i++){
+			if(arr[i]==s){
+				return i;
+			}
+		}
+		return -1;
+	}
+	function strJoin(){
+		var str = "";
+		arr.sort();
+		for (var i = 0; i < arr.length; i++) {
+			str += as[arr[i]].innerHTML;
+		}
+		s.value = str;
+	}
+//	alert(inArray([1,2,3],1))
+
+//	var arr2 = [1,2,3,4];
+//	arr2.splice(1,2);
+//	alert(arr2);
+</script>
+
+</body>
+</html>
